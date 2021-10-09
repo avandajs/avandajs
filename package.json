@@ -1,7 +1,7 @@
 {
-  "name": "@avanda/app",
-  "version": "0.10.1",
-  "description": "Avanda core module",
+  "name": "@avanda/avandajs",
+  "version": "0.0.2",
+  "description": "Avanda javascript client",
   "main": "./build/index.js",
   "types": "./src/index.ts",
   "author": "Wharley01",
