@@ -102,15 +102,15 @@ class Graph {
     notEquals(value) {
         return this.addCustomFilter(value, "!=");
     }
-    isNull(value) {
-        return this.addCustomFilter(value, "NULL");
+    isNull() {
+        return this.addCustomFilter(null, "NULL");
     }
-    isNotNull(value) {
-        return this.addCustomFilter(value, "NOTNULL");
+    isNotNull() {
+        return this.addCustomFilter(null, "NOTNULL");
     }
-    matches(value) {
-        return this.addCustomFilter(value, "MATCHES");
-    }
+    // matches (value: string) {
+    //     return this.addCustomFilter(value,"MATCHES")
+    // }
     isLike(value) {
         return this.addCustomFilter(value, "LIKES");
     }
