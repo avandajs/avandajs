@@ -115,35 +115,35 @@ export default class Graph {
         return this;
     };
 
-    greaterThan(value: string) {
+    greaterThan(value: number) {
         return this.addCustomFilter(value,">")
     }
-    lessThan (value: string) {
+    lessThan (value: number) {
         return this.addCustomFilter(value,"<")
     }
-    equals (value: string) {
+    equals (value: any) {
         return this.addCustomFilter(value,"==")
     }
-    notEquals (value: string) {
+    notEquals (value: any) {
         return this.addCustomFilter(value,"!=")
     }
-    isNull (value: string) {
-        return this.addCustomFilter(value,"NULL")
+    isNull () {
+        return this.addCustomFilter(null,"NULL")
     }
-    isNotNull (value: string) {
-        return this.addCustomFilter(value,"NOTNULL")
+    isNotNull () {
+        return this.addCustomFilter(null,"NOTNULL")
     }
-    matches (value: string) {
-        return this.addCustomFilter(value,"MATCHES")
-    }
-    isLike (value: string) {
+    // matches (value: string) {
+    //     return this.addCustomFilter(value,"MATCHES")
+    // }
+    isLike (value: any) {
         return this.addCustomFilter(value,"LIKES")
     }
-    isNotLike (value: string) {
+    isNotLike (value: any) {
         return this.addCustomFilter(value,"NOT-LIKES")
     }
 
-    addCustomFilter(value: string,operator: string) {
+    addCustomFilter(value: any,operator: string) {
         if(!this.last_col)
             throw new Error(`Specify column to compare ${value} with`);
 
