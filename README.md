@@ -92,4 +92,4 @@ let user = await new Graph()
 
 ## Security at the back of your mind
 
-while it is easier to just use the constraint clauses on the go, be sure you aren't giving user's access to too much by add additional constraints to you model in your function on the server side and also implementing necessary middleWares
+while it is easier to just use the constraint clauses on the go, be sure you aren't giving user's access to too much by add additional constraints to the model associated to your Service/controller on the server side and also implementing necessary middleWares
