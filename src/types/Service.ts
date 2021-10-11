@@ -5,7 +5,8 @@ type Service = {
     n?: string,//service name
     f?: string,//service function
     c: Array<string|Service>,// service columns
-    al?: string,//service alias
+    a?: string,//service alias
+    al?: boolean,//should auto-link
     p: number,//service page
     pr: Datum,//Service params
     ft: Filters,

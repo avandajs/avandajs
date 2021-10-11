@@ -270,7 +270,7 @@ export default class Graph {
             throw new Error('Specify service to apply alias to')
         }
 
-        this.queryTree.al = alias;
+        this.queryTree.a = alias;
         return this.queryTree;
     };
 
@@ -282,6 +282,8 @@ export default class Graph {
         // console.log(JSON.stringify(this.queryTree))
         if (!this.queryTree) throw new Error("Service not specified");
         let query: string;
+
+        this.queryTree.al = this.auto_link
 
         if(query = JSON.stringify(this.queryTree)){
             return "query="+query;
