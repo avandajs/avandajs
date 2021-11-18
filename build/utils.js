@@ -49,11 +49,12 @@ var Utils = {
     },
     formBuild: function (fields) {
         return __awaiter(this, void 0, void 0, function () {
-            var form, _a, _b, _i, field, value;
+            var form, isFile, _a, _b, _i, field, value, index;
             return __generator(this, function (_c) {
                 switch (_c.label) {
                     case 0:
                         form = new FormData();
+                        isFile = false;
                         _a = [];
                         for (_b in fields)
                             _a.push(_b);
@@ -70,6 +71,7 @@ var Utils = {
                     case 2:
                         value = _c.sent();
                         if (!(value instanceof Event)) return [3 /*break*/, 4];
+                        isFile = true;
                         return [4 /*yield*/, index_1.default.File(value)];
                     case 3:
                         value = _c.sent();
@@ -83,10 +85,17 @@ var Utils = {
                         value = _c.sent();
                         _c.label = 6;
                     case 6:
-                        if (Utils.isArray(value) || Utils.isObject(value)) {
+                        if ((Utils.isArray(value) || Utils.isObject(value)) && !isFile) {
                             value = JSON.stringify(value);
                         }
-                        form.append(field, value);
+                        if (isFile && Array.isArray(value)) {
+                            for (index in value) {
+                                form.append(field, value[index]);
+                            }
+                        }
+                        else {
+                            form.append(field, value);
+                        }
                         _c.label = 7;
                     case 7:
                         _i++;
