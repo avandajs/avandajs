@@ -1,38 +1,40 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Response = void 0;
-class Response {
-    constructor(rawResponse = {
-        data: null,
-        msg: "",
-        status: 0,
-        totalPages: 0,
-        currentPage: 1
-    }) {
+var Response = /** @class */ (function () {
+    function Response(rawResponse) {
+        if (rawResponse === void 0) { rawResponse = {
+            data: null,
+            msg: "",
+            status: 0,
+            totalPages: 0,
+            currentPage: 1
+        }; }
         this.rawResponse = rawResponse;
     }
-    getData() {
+    Response.prototype.getData = function () {
         return this.rawResponse.data;
-    }
-    setData(data) {
+    };
+    Response.prototype.setData = function (data) {
         this.rawResponse.data = data;
         return this;
-    }
-    getMsg() {
+    };
+    Response.prototype.getMsg = function () {
         return this.rawResponse.msg;
-    }
-    getNetworkErrorMsg() {
+    };
+    Response.prototype.getNetworkErrorMsg = function () {
         var _a;
         return (_a = this.rawResponse.networkMsg) !== null && _a !== void 0 ? _a : null;
-    }
-    getStatus() {
+    };
+    Response.prototype.getStatus = function () {
         return this.rawResponse.status;
-    }
-    getTotalPages() {
+    };
+    Response.prototype.getTotalPages = function () {
         return this.rawResponse.totalPages;
-    }
-    getCurrentPage() {
+    };
+    Response.prototype.getCurrentPage = function () {
         return this.rawResponse.currentPage;
-    }
-}
+    };
+    return Response;
+}());
 exports.Response = Response;

@@ -46,6 +46,10 @@ export default class Graph {
         return column;
     }
 
+    static async File(event): Promise<File|File[]>{
+        return Utils.extractPostable(await Utils.processFile(event));
+    }
+
     static validColOnly(column: string) {
         if (!/[\w._]+/.test(column)) {
             throw new Error("Invalid column name");
@@ -279,24 +283,23 @@ export default class Graph {
     };
 
     private toLink() {
-        // console.log(JSON.stringify(this.queryTree))
         if (!this.queryTree) throw new Error("Service not specified");
         let query: string;
 
         this.queryTree.al = this.auto_link
+        query = JSON.stringify(this.queryTree)
 
-        if(query = JSON.stringify(this.queryTree)){
+        if(query){
             return "query="+query;
         }else
             throw new Error('Unable to generate query string')
     };
 
     private async makeRequest(endpoint: string, method:string = 'get', params: Datum = {}): Promise<Response> {
-
         let req = axios.create(Graph.requestConfig);
         return new Promise(async (resolve, reject) => {
             try {
-                let res = await (req as any)[method](endpoint, params);
+                let res = await (req as any)[method](endpoint, await params,Graph.requestConfig);
                 res = res.data;
                 resolve(new Response(res));
             } catch (e) {
@@ -316,11 +319,11 @@ export default class Graph {
 
                 if (axios.isAxiosError(err)){
                    netRes =  (err.response as unknown as ResponseStruct)
-                   error.data = netRes?.data
-                   error.msg = netRes?.msg
-                   error.status = netRes?.status
-                   error.totalPages = netRes?.totalPages
-                   error.currentPage = netRes?.currentPage
+                   error.data = netRes?.data?.data
+                   error.msg = netRes?.data?.msg
+                   error.status = netRes?.status ?? netRes?.data?.statusCode
+                   error.totalPages = netRes?.data?.totalPages
+                   error.currentPage = netRes?.data?.currentPage
                 }
 
                 error.networkMsg = err.message
@@ -335,7 +338,7 @@ export default class Graph {
         return await this.makeRequest(link, 'get');
     };
 
-    public async post(values = {}): Promise<Response> {
+    public async post(values: Datum = {}): Promise<Response> {
         return this.set(values);
     };
 
@@ -374,5 +377,6 @@ export default class Graph {
 }
 
 export {
-    Graph
+    Graph,
+    Response
 };
