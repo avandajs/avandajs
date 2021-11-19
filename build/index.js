@@ -205,7 +205,7 @@ var Graph = /** @class */ (function () {
     };
     ;
     Graph.prototype.page = function (page) {
-        if (isNaN(page)) {
+        if (isNaN(parseInt(page))) {
             throw new Error("Page must be a valid number");
         }
         if (this.queryTree) {
@@ -216,7 +216,7 @@ var Graph = /** @class */ (function () {
     ;
     Graph.prototype.search = function (col, keyword) {
         if (!col) {
-            throw new Error("Page must be a valid number");
+            throw new Error("Specify column to search");
         }
         if (this.queryTree) {
             this.queryTree.q = {

@@ -184,7 +184,7 @@ export default class Graph {
     };
 
     public page(page: number) {
-        if (isNaN(page)) {
+        if (isNaN(parseInt(page as unknown as string))) {
             throw new Error("Page must be a valid number");
         }
         if (this.queryTree){
@@ -196,7 +196,7 @@ export default class Graph {
 
     search(col: string,keyword: string) {
         if (!col) {
-            throw new Error("Page must be a valid number");
+            throw new Error("Specify column to search");
         }
         if(this.queryTree){
             this.queryTree.q = {
