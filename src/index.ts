@@ -69,17 +69,8 @@ export default class Graph {
 
     service(name: string) {
         let tokens = name.split("/");
-
-        this.queryTree = {
-            al: undefined,
-            ft: {},
-            c: [],
-            f: tokens[1] !== "undefined" ? tokens[1] : undefined,
-            n: tokens[0],
-            p: 0,
-            pr: {}
-        }
-
+        this.queryTree.f = tokens[1] !== "undefined" ? tokens[1] : undefined;
+        this.queryTree.n = tokens[0]
         return this;
     };
 
