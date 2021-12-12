@@ -1,6 +1,6 @@
 {
   "name": "@avanda/avandajs",
-  "version": "0.1.7",
+  "version": "0.1.9",
   "description": "Avanda javascript client",
   "main": "./build/index.js",
   "types": "./src/index.ts",

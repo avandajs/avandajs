@@ -77,7 +77,6 @@ var Utils = {
                         value = _c.sent();
                         _c.label = 4;
                     case 4:
-                        window.console.log({ value: value });
                         value = value === false ? 0 : (value === true) ? 1 : value;
                         if (!(value instanceof Promise)) return [3 /*break*/, 6];
                         return [4 /*yield*/, value];
@@ -90,7 +89,7 @@ var Utils = {
                         }
                         if (isFile && Array.isArray(value)) {
                             for (index in value) {
-                                form.append(field, value[index]);
+                                form.append(field + ("[" + index + "]"), value[index]);
                             }
                         }
                         else {
