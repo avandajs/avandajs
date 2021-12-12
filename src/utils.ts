@@ -24,8 +24,6 @@ let Utils = {
                     isFile = true
                     value = await Graph.File(value)
                 }
-
-                window.console.log({value})
                 value = value === false ? 0 : (value === true) ? 1 : value;
 
                 if (value instanceof Promise){
@@ -37,7 +35,7 @@ let Utils = {
                 }
                 if (isFile && Array.isArray(value)){
                     for (let index in value){
-                        form.append(field, value[index]);
+                        form.append(field+`[${index}]`, value[index]);
                     }
                 }else{
                     form.append(field, value);
