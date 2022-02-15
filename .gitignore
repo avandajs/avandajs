@@ -1,0 +1,8 @@
+node_modules
+.env
+<<<<<<< HEAD
+package-lock.json
+yarm.lock
+=======
+package-lock.json
+>>>>>>> 56d1a3148d4e1359ea6dcb387e9bdd9db5827caf
