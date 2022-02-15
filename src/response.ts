@@ -1,11 +1,7 @@
 import ResponseStruct from "./types/ResponseStruct";
 
 
-<<<<<<< HEAD
-export default class Response {
-=======
 export class Response {
->>>>>>> 56d1a3148d4e1359ea6dcb387e9bdd9db5827caf
 
     constructor(
         private rawResponse: ResponseStruct = {

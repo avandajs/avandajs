@@ -1,11 +1,6 @@
 {
   "name": "@avanda/avandajs",
-<<<<<<< HEAD
-  "version": "0.1.19",
-
-=======
   "version": "0.1.9",
->>>>>>> 56d1a3148d4e1359ea6dcb387e9bdd9db5827caf
   "description": "Avanda javascript client",
   "main": "./build/index.js",
   "types": "./src/index.ts",

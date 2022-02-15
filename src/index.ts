@@ -2,11 +2,7 @@
 import axios, {AxiosError,AxiosRequestConfig} from "axios";
 // @ts-ignore
 import {md5} from "pure-md5"
-<<<<<<< HEAD
-import Response from "./response";
-=======
 import {Response} from "./response";
->>>>>>> 56d1a3148d4e1359ea6dcb387e9bdd9db5827caf
 import Service from "./types/Service";
 import Datum from "./types/Datum";
 import ResponseStruct from "./types/ResponseStruct";
@@ -50,13 +46,9 @@ export default class Graph {
         return column;
     }
 
-<<<<<<< HEAD
-
-=======
     static async File(event): Promise<File|File[]>{
         return Utils.extractPostable(await Utils.processFile(event));
     }
->>>>>>> 56d1a3148d4e1359ea6dcb387e9bdd9db5827caf
 
     static validColOnly(column: string) {
         if (!/[\w._]+/.test(column)) {
@@ -296,17 +288,9 @@ export default class Graph {
 
     private async makeRequest(endpoint: string, method:string = 'get', params: Datum = {}): Promise<Response> {
         let req = axios.create(Graph.requestConfig);
-<<<<<<< HEAD
-        console.log({params})
         return new Promise(async (resolve, reject) => {
             try {
                 let res = await (req as any)[method](endpoint, await params,Graph.requestConfig);
-                console.log({res})
-=======
-        return new Promise(async (resolve, reject) => {
-            try {
-                let res = await (req as any)[method](endpoint, await params,Graph.requestConfig);
->>>>>>> 56d1a3148d4e1359ea6dcb387e9bdd9db5827caf
                 res = res.data;
                 resolve(new Response(res));
             } catch (e) {
@@ -360,11 +344,6 @@ export default class Graph {
         if (!this.queryTree)
             throw new Error('Specify service to send request to')
 
-<<<<<<< HEAD
-        console.log({values})
-
-=======
->>>>>>> 56d1a3148d4e1359ea6dcb387e9bdd9db5827caf
         this.postData = values;
         let link = Graph.endpoint + '?' + this.toLink();
         return await this.makeRequest(link, 'post', Utils.formBuild(this.postData));
@@ -373,10 +352,6 @@ export default class Graph {
     public async update(values: Datum = {}): Promise<Response> {
         if (!this.queryTree)
             throw new Error('Specify service to send request to')
-<<<<<<< HEAD
-        console.log({values})
-=======
->>>>>>> 56d1a3148d4e1359ea6dcb387e9bdd9db5827caf
 
         this.postData = values;
 
