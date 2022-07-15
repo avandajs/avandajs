@@ -124,6 +124,17 @@ var Graph = /** @class */ (function () {
         return this;
     };
     ;
+    Graph.prototype.andWhere = function (conditions) {
+        this.accumulate = true;
+        if (!this.queryTree)
+            throw new Error('Specify service to apply where clause on');
+        if (typeof conditions == 'object')
+            this.queryTree.ft = __assign(__assign({}, this.queryTree.ft), this.objToFilter(conditions));
+        else
+            this.last_col = conditions;
+        return this;
+    };
+    ;
     Graph.prototype.objToFilter = function (obj) {
         var filters = {};
         for (var k in obj) {
@@ -134,16 +145,6 @@ var Graph = /** @class */ (function () {
         }
         return filters;
     };
-    Graph.prototype.andWhere = function (conditions) {
-        if (!this.queryTree)
-            throw new Error('Specify service to apply where clause on');
-        if (typeof conditions == 'object')
-            this.queryTree.ft = __assign(__assign({}, this.queryTree.ft), conditions);
-        else
-            this.last_col = conditions;
-        return this;
-    };
-    ;
     Graph.prototype.greaterThan = function (value) {
         return this.addCustomFilter(value, ">");
     };
