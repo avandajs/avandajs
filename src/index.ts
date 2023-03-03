@@ -1,16 +1,30 @@
 // @ts-ignore
-import axios, {AxiosError,AxiosRequestConfig} from "axios";
+import axios, { AxiosError, AxiosRequestConfig } from "axios";
 // @ts-ignore
-import {md5} from "pure-md5"
-import {Response} from "./response";
+import { md5 } from "pure-md5"
+import { Response } from "./response";
 import Service from "./types/Service";
 import Datum from "./types/Datum";
 import ResponseStruct from "./types/ResponseStruct";
 import Utils from "./utils";
 import Filters from "./types/Filters";
+import AvandaStream from "./stream";
+
+
+interface AvandaConfig {
+    secureWebSocket?: boolean;
+    rootUrl: string;
+    wsUrl?: string
+  
+}
 
 export default class Graph {
-    static requestConfig: AxiosRequestConfig
+    static axiosRequestConfig: AxiosRequestConfig
+    static config: AvandaConfig = {
+        rootUrl:'/',
+        secureWebSocket: false,
+    }
+
     static endpoint: string = "/"
 
     private queryTree: Service = {
@@ -32,26 +46,32 @@ export default class Graph {
 
     }
 
-    static setRequestConfig(config: AxiosRequestConfig) {
-        Graph.requestConfig = {
-            ...Graph.requestConfig,
+    static setAxiosRequestConfig(config: AxiosRequestConfig) {
+        Graph.axiosRequestConfig = {
+            ...{ baseURL: this.config.rootUrl },
+            ...Graph.axiosRequestConfig,
             ...config,
         };
     }
 
+    static setAvandaConfig(config: AvandaConfig) {
+        Graph.config = config;
+    }
+
+
     static Column(column: string) {
-        if (/[^\w_]/.test(column)) {
+        if (/[^\w_\*]/.test(column)) {
             throw new Error("Invalid column name");
         }
         return column;
     }
 
-    static async File(event): Promise<File|File[]>{
+    static async File(event): Promise<File | File[]> {
         return Utils.extractPostable(await Utils.processFile(event));
     }
 
     static validColOnly(column: string) {
-        if (!/[\w._]+/.test(column)) {
+        if (!/[\w._\*]+/.test(column)) {
             throw new Error("Invalid column name");
         }
 
@@ -78,17 +98,17 @@ export default class Graph {
         if (!this.queryTree)
             throw new Error('Specify service to apply where clause on')
 
-        if(typeof conditions == 'object')
+        if (typeof conditions == 'object')
             this.queryTree.ft = this.objToFilter(conditions);
         else
             this.last_col = conditions
         return this;
     };
 
-    objToFilter(obj: {[k:string]: any}): Filters{
+    objToFilter(obj: { [k: string]: any }): Filters {
         let filters: Filters = {};
 
-        for (let k in obj){
+        for (let k in obj) {
             filters[k] = {
                 vl: obj[k],
                 op: "="
@@ -103,47 +123,47 @@ export default class Graph {
         if (!this.queryTree)
             throw new Error('Specify service to apply where clause on')
 
-        if(typeof conditions == 'object')
-            this.queryTree.ft = {...this.queryTree.ft,...conditions};
+        if (typeof conditions == 'object')
+            this.queryTree.ft = { ...this.queryTree.ft, ...conditions };
         else
             this.last_col = conditions
         return this;
     };
 
     greaterThan(value: number) {
-        return this.addCustomFilter(value,">")
+        return this.addCustomFilter(value, ">")
     }
-    lessThan (value: number) {
-        return this.addCustomFilter(value,"<")
+    lessThan(value: number) {
+        return this.addCustomFilter(value, "<")
     }
-    equals (value: any) {
-        return this.addCustomFilter(value,"==")
+    equals(value: any) {
+        return this.addCustomFilter(value, "==")
     }
-    notEquals (value: any) {
-        return this.addCustomFilter(value,"!=")
+    notEquals(value: any) {
+        return this.addCustomFilter(value, "!=")
     }
-    isNull () {
-        return this.addCustomFilter(null,"NULL")
+    isNull() {
+        return this.addCustomFilter(null, "NULL")
     }
-    isNotNull () {
-        return this.addCustomFilter(null,"NOTNULL")
+    isNotNull() {
+        return this.addCustomFilter(null, "NOTNULL")
     }
     // matches (value: string) {
     //     return this.addCustomFilter(value,"MATCHES")
     // }
-    isLike (value: any) {
-        return this.addCustomFilter(value,"LIKES")
+    isLike(value: any) {
+        return this.addCustomFilter(value, "LIKES")
     }
-    isNotLike (value: any) {
-        return this.addCustomFilter(value,"NOT-LIKES")
+    isNotLike(value: any) {
+        return this.addCustomFilter(value, "NOT-LIKES")
     }
 
-    addCustomFilter(value: any,operator: string) {
-        if(!this.last_col)
+    addCustomFilter(value: any, operator: string) {
+        if (!this.last_col)
             throw new Error(`Specify column to compare ${value} with`);
 
         let filter = {
-            [this.last_col]:{
+            [this.last_col]: {
                 vl: value,
                 op: operator
             }
@@ -153,7 +173,7 @@ export default class Graph {
             throw new Error('Specify service to apply where clauses')
 
         this.queryTree.ft = {
-            ...(this.accumulate ? this.queryTree.ft:null),
+            ...(this.accumulate ? this.queryTree.ft : null),
             ...filter
         }
         this.last_col = undefined;
@@ -163,7 +183,7 @@ export default class Graph {
 
 
     public ref(id: number) {
-        if (this.queryTree){
+        if (this.queryTree) {
             this.queryTree.ft = {
                 ...this.queryTree.ft,
                 ...this.objToFilter({
@@ -178,18 +198,18 @@ export default class Graph {
         if (isNaN(parseInt(page as unknown as string))) {
             throw new Error("Page must be a valid number");
         }
-        if (this.queryTree){
+        if (this.queryTree) {
             this.queryTree.p = page;
         }
         return this;
     };
 
 
-    search(col: string,keyword: string) {
+    search(col: string, keyword: string) {
         if (!col) {
             throw new Error("Specify column to search");
         }
-        if(this.queryTree){
+        if (this.queryTree) {
             this.queryTree.q = {
                 c: Graph.validColOnly(col),
                 k: keyword
@@ -199,16 +219,16 @@ export default class Graph {
         return this;
     };
 
-    public select(...columns: Array<string|Service|Graph>) {
-        if (!this.queryTree){
+    public select(...columns: Array<string | Service | Graph>) {
+        if (!this.queryTree) {
             throw new Error('Specify service to select from')
         }
         this.queryTree.f = "get";
         this.fetch(...columns);
         return this;
     };
-    public selectAll(...columns: Array<string|Service|Graph>) {
-        if (!this.queryTree){
+    public selectAll(...columns: Array<string | Service | Graph>) {
+        if (!this.queryTree) {
             throw new Error('Specify service to select from')
         }
         this.queryTree.f = "getAll";
@@ -216,37 +236,16 @@ export default class Graph {
         return this;
     };
 
-    // public async getOne(...columns: Array<string|Service>) {
-    //     if (!this.queryTree){
-    //         throw new Error('Specify service to select from')
-    //     }
-    //     this.queryTree.f = "get";
-    //     columns = [...this.queryTree.c,...columns]
-    //
-    //     this.fetch(...columns);
-    //     return await this.get();
-    // };
-    // getAll(...columns: Array<string|Service>) {
-    //     if (!this.queryTree){
-    //         throw new Error('Specify service to select from')
-    //     }
-    //     this.queryTree.f = "getAll";
-    //
-    //     columns = [...this.queryTree.c,...columns]
-    //     this.fetch(...columns);
-    //     return this.get();
-    // };
-
     func(func: string) {
-        if (!this.queryTree){
+        if (!this.queryTree) {
             throw new Error('Specify service to select from')
         }
         this.queryTree.f = func;
         return this;
     };
 
-    fetch(...columns: Array<string|Service|Graph>) {
-        if (!this.queryTree){
+    fetch(...columns: Array<string | Service | Graph>) {
+        if (!this.queryTree) {
             throw new Error('Specify service to fetch from')
         }
 
@@ -261,7 +260,7 @@ export default class Graph {
     };
 
     public as(alias: string): Service {
-        if (!this.queryTree){
+        if (!this.queryTree) {
             throw new Error('Specify service to apply alias to')
         }
 
@@ -269,7 +268,7 @@ export default class Graph {
         return this.queryTree;
     };
 
-    public getCacheHash(){
+    public getCacheHash() {
         return md5(JSON.stringify(this.queryTree));
     };
 
@@ -280,17 +279,17 @@ export default class Graph {
         this.queryTree.al = this.auto_link
         query = JSON.stringify(this.queryTree)
 
-        if(query){
-            return "query="+query;
-        }else
+        if (query) {
+            return "query=" + query;
+        } else
             throw new Error('Unable to generate query string')
     };
 
-    private async makeRequest(endpoint: string, method:string = 'get', params: Datum = {}): Promise<Response> {
-        let req = axios.create(Graph.requestConfig);
+    private async makeRequest(endpoint: string, method: string = 'get', params: Datum = {}): Promise<Response> {
+        let req = axios.create(Graph.axiosRequestConfig);
         return new Promise(async (resolve, reject) => {
             try {
-                let res = await (req as any)[method](endpoint, await params,Graph.requestConfig);
+                let res = await (req as any)[method](endpoint, await params, Graph.axiosRequestConfig);
                 res = res.data;
                 resolve(new Response(res));
             } catch (e) {
@@ -308,13 +307,13 @@ export default class Graph {
                 let netRes: ResponseStruct
 
 
-                if (axios.isAxiosError(err)){
-                   netRes =  (err.response as unknown as ResponseStruct)
-                   error.data = netRes?.data?.data
-                   error.msg = netRes?.data?.msg
-                   error.status = netRes?.status ?? netRes?.data?.statusCode
-                   error.totalPages = netRes?.data?.totalPages
-                   error.currentPage = netRes?.data?.currentPage
+                if (axios.isAxiosError(err)) {
+                    netRes = (err.response as unknown as ResponseStruct)
+                    error.data = netRes?.data?.data
+                    error.msg = netRes?.data?.msg
+                    error.status = netRes?.status ?? netRes?.data?.statusCode
+                    error.totalPages = netRes?.data?.totalPages
+                    error.currentPage = netRes?.data?.currentPage
                 }
 
                 error.networkMsg = err.message
@@ -364,6 +363,18 @@ export default class Graph {
             throw new Error('Specify service to bind param to')
         this.queryTree.pr = params;
         return this;
+    };
+
+
+
+    public watch(): AvandaStream {
+        let link = (Graph.config.wsUrl || Graph.config.rootUrl) + Graph.endpoint + '?' + this.toLink()
+        let url = new URL(link);
+        url.protocol = Graph.config.secureWebSocket ? 'wss' : 'ws'
+        url.pathname = '/watch'
+        return new AvandaStream(
+            url.toString()
+        )
     };
 }
 

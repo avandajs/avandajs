@@ -2,10 +2,11 @@
   "compilerOptions": {
     "module": "commonjs",
     "esModuleInterop": true,
-    "target": "ES5",
+    "target": "es2016",
     "moduleResolution": "node",
     "outDir": "build",
     "rootDir": "./src",
+
   },
   "lib": ["es2015"]
 }

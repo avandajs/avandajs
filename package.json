@@ -1,6 +1,6 @@
 {
   "name": "@avanda/avandajs",
-  "version": "0.1.9",
+  "version": "0.2.3",
   "description": "Avanda javascript client",
   "main": "./build/index.js",
   "types": "./src/index.ts",
@@ -8,7 +8,9 @@
   "license": "MIT",
   "private": false,
   "scripts": {
-    "dev": "nodemon"
+    "dev": "nodemon",
+    "build": "tsc",
+    "test": "vitest"
   },
   "publishConfig": {
     "access": "public"
@@ -19,6 +21,7 @@
     "body-parser": "^1.19.0",
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
+    "form-data": "^4.0.0",
     "pure-md5": "^0.1.13",
     "sequelize": "^6.6.5"
   },
@@ -32,6 +35,6 @@
     "source-map-support": "^0.5.19",
     "ts-node": "^10.2.0",
     "tslint": "^6.1.3",
-    "typescript": "^4.3.5"
+    "typescript": "^4.8.4"
   }
 }
