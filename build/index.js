@@ -82,6 +82,18 @@ class Graph {
         return this;
     }
     ;
+    andWhere(conditions) {
+        var _a;
+        this.accumulate = true;
+        if (!this.queryTree)
+            throw new Error('Specify service to apply where clause on');
+        if (typeof conditions == 'object')
+            this.queryTree.ft = Object.assign(Object.assign({}, ((_a = this.queryTree.ft) !== null && _a !== void 0 ? _a : null)), this.objToFilter(conditions));
+        else
+            this.last_col = conditions;
+        return this;
+    }
+    ;
     objToFilter(obj) {
         let filters = {};
         for (let k in obj) {
@@ -92,16 +104,6 @@ class Graph {
         }
         return filters;
     }
-    andWhere(conditions) {
-        if (!this.queryTree)
-            throw new Error('Specify service to apply where clause on');
-        if (typeof conditions == 'object')
-            this.queryTree.ft = Object.assign(Object.assign({}, this.queryTree.ft), conditions);
-        else
-            this.last_col = conditions;
-        return this;
-    }
-    ;
     greaterThan(value) {
         return this.addCustomFilter(value, ">");
     }
