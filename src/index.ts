@@ -105,6 +105,22 @@ export default class Graph {
         return this;
     };
 
+
+    andWhere(conditions: Datum | string) {
+        this.accumulate = true;
+        if (!this.queryTree)
+            throw new Error('Specify service to apply where clause on')
+
+        if(typeof conditions == 'object')
+            this.queryTree.ft = {
+                ...(this.queryTree.ft ?? null),
+                ...this.objToFilter(conditions)
+            };
+        else
+            this.last_col = conditions
+        return this;
+    };
+
     objToFilter(obj: { [k: string]: any }): Filters {
         let filters: Filters = {};
 
@@ -119,16 +135,6 @@ export default class Graph {
 
     }
 
-    andWhere(conditions: object | string) {
-        if (!this.queryTree)
-            throw new Error('Specify service to apply where clause on')
-
-        if (typeof conditions == 'object')
-            this.queryTree.ft = { ...this.queryTree.ft, ...conditions };
-        else
-            this.last_col = conditions
-        return this;
-    };
 
     greaterThan(value: number) {
         return this.addCustomFilter(value, ">")
