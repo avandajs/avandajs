@@ -1,7 +1,6 @@
 import Datum from "./types/Datum";
-import FileInput from "./types/FileInput";
 import Graph from "./index";
-import FormData from "form-data";
+import FileInput from "./types/FIleInput";
 
 let Utils = {
     isArray(a: Datum) {
@@ -52,25 +51,26 @@ let Utils = {
         }
         return isNodeEnv ? fields : form;
     },
-    async processFile(event, allowed_file_types = []): Promise<FileInput | FileInput[]> {
+    async processFile(event: Event, allowed_file_types = []): Promise<FileInput | FileInput[]> {
         return new Promise(async (resolve, reject) => {
             let files = [];
-
-            let selected_files = Array.from(event.target.files) as { [i: number]: { type: string } };
+            // @ts-ignore
+            let selected_files = Array.from(event?.target?.files) as { [i: number]: { type: string } };
             for (let index in selected_files) {
                 let file = selected_files[index]
                 let selected_file_mime = file.type;
-                if (allowed_file_types && allowed_file_types.length && !allowed_file_types.includes(selected_file_mime)) {
+                if (allowed_file_types && allowed_file_types.length && !allowed_file_types.includes(selected_file_mime as never)) {
                     reject('You can only upload an image file!');
                     return;
                 }
-                let preview = await Utils.fileToBas64(file)
+                let preview = await Utils.fileToBas64(file as Blob)
 
                 files.push({
                     preview,
                     file
                 })
             }
+            // @ts-ignore
             resolve(files.length === 1 ? files[0] : files);
         })
     },
@@ -80,7 +80,7 @@ let Utils = {
         }
         return files.file
     },
-    async fileToBas64(file) {
+    async fileToBas64(file: Blob) {
         const reader = new FileReader();
         return new Promise((resolve, reject) => {
             reader.readAsDataURL(file)

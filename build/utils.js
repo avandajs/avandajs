@@ -13,7 +13,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const index_1 = __importDefault(require("./index"));
-const form_data_1 = __importDefault(require("form-data"));
 let Utils = {
     isArray(a) {
         return (!!a) && (a.constructor === Array);
@@ -23,7 +22,7 @@ let Utils = {
     },
     formBuild(fields) {
         return __awaiter(this, void 0, void 0, function* () {
-            let form = new form_data_1.default();
+            let form = new FormData();
             let isNodeEnv = typeof window === 'undefined';
             let isFile = false;
             for (let field in fields) {
@@ -62,8 +61,10 @@ let Utils = {
     processFile(event, allowed_file_types = []) {
         return __awaiter(this, void 0, void 0, function* () {
             return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
+                var _a;
                 let files = [];
-                let selected_files = Array.from(event.target.files);
+                // @ts-ignore
+                let selected_files = Array.from((_a = event === null || event === void 0 ? void 0 : event.target) === null || _a === void 0 ? void 0 : _a.files);
                 for (let index in selected_files) {
                     let file = selected_files[index];
                     let selected_file_mime = file.type;
@@ -77,6 +78,7 @@ let Utils = {
                         file
                     });
                 }
+                // @ts-ignore
                 resolve(files.length === 1 ? files[0] : files);
             }));
         });

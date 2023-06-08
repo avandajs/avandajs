@@ -33,8 +33,9 @@ class AvandaStream {
         }));
     }
     close(code) {
+        var _a;
         this.manualClosed = true;
-        this.socket.close(code);
+        (_a = this.socket) === null || _a === void 0 ? void 0 : _a.close(code);
         if (typeof this.onClosedFunc == 'function') {
             this.onClosedFunc();
         }

@@ -14,16 +14,14 @@ import AvandaStream from "./stream";
 interface AvandaConfig {
     secureWebSocket?: boolean;
     rootUrl: string;
-    wsUrl?: string
+    wsUrl?: string,
+    authToken?: string 
   
 }
 
 export default class Graph {
     static axiosRequestConfig: AxiosRequestConfig
-    static config: AvandaConfig = {
-        rootUrl:'/',
-        secureWebSocket: false,
-    }
+    static config: AvandaConfig;
 
     static endpoint: string = "/"
 
@@ -56,6 +54,14 @@ export default class Graph {
 
     static setAvandaConfig(config: AvandaConfig) {
         Graph.config = config;
+        Graph.axiosRequestConfig = {
+            ...Graph.axiosRequestConfig,
+            ...{ baseURL: this.config.rootUrl },  
+        };
+        Graph.axiosRequestConfig.headers = {
+            ...Graph.axiosRequestConfig.headers,
+            ...(config.authToken && {Authorization: `Bearer ${config.authToken}`}),
+        };
     }
 
 
@@ -66,7 +72,7 @@ export default class Graph {
         return column;
     }
 
-    static async File(event): Promise<File | File[]> {
+    static async File(event: Event): Promise<File | File[]> {
         return Utils.extractPostable(await Utils.processFile(event));
     }
 

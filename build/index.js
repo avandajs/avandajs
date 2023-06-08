@@ -40,6 +40,8 @@ class Graph {
     }
     static setAvandaConfig(config) {
         Graph.config = config;
+        Graph.axiosRequestConfig = Object.assign(Object.assign({}, Graph.axiosRequestConfig), { baseURL: this.config.rootUrl });
+        Graph.axiosRequestConfig.headers = Object.assign(Object.assign({}, Graph.axiosRequestConfig.headers), (config.authToken && { Authorization: `Bearer ${config.authToken}` }));
     }
     static Column(column) {
         if (/[^\w_\*]/.test(column)) {
@@ -335,10 +337,6 @@ class Graph {
     }
     ;
 }
+Graph.endpoint = "/";
 exports.default = Graph;
 exports.Graph = Graph;
-Graph.config = {
-    rootUrl: '/',
-    secureWebSocket: false,
-};
-Graph.endpoint = "/";

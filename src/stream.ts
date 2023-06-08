@@ -1,11 +1,11 @@
 import { Response } from "./response";
 
 export default class AvandaStream {
-    private onOpenedFunc: () => void;
-    private onClosedFunc: () => void;
-    private manualClosed: boolean;
+    private onOpenedFunc?: (() => void);
+    private onClosedFunc?: (() => void);
+    private manualClosed?: boolean;
     private retryDelayTime: number = 3000;
-    private socket: WebSocket
+    private socket?: WebSocket
 
     constructor(
         public url: string,
@@ -37,7 +37,7 @@ export default class AvandaStream {
 
     close(code?: number) {
         this.manualClosed = true;
-        this.socket.close(code)
+        this.socket?.close(code)
         if(typeof this.onClosedFunc == 'function'){
             this.onClosedFunc();
         }
